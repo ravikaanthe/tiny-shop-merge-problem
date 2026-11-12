@@ -43,7 +43,7 @@ function renderProducts() {
       <h3>${p.name}</h3>
       <div class="price">
         <span>${money(p.price)}</span>
-        ${p.onSale ? '<span class="tag">Sale</span>' : ''}
+        ${p.compareAtPrice && p.compareAtPrice > p.price ? `<span class="was">${money(p.compareAtPrice)}</span> <span class="tag">Sale</span>` : ''}
       </div>
       <button type="button" data-add="${p.id}">Add to cart</button>
     </article>`).join('');
@@ -92,7 +92,15 @@ function renderCart() {
     return;
   }
 
+  const saleSavings = q.lines.reduce((sum, l) => {
+    const p = CATALOG.find((x) => x.id === l.id);
+    return sum + (p && p.compareAtPrice && p.compareAtPrice > p.price
+      ? (p.compareAtPrice - p.price) * l.qty
+      : 0);
+  }, 0);
+
   $('cart-body').innerHTML = `
+    ${saleSavings > 0 ? `<p class="savings" data-testid="savings-banner">● You're saving ${money(saleSavings)} with sale prices</p>` : ''}
     ${q.lines.map((l) => `
       <div class="line" data-testid="line-${l.id}">
         <span class="line-name">${l.name}</span>

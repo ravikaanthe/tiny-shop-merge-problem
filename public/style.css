@@ -133,3 +133,20 @@ button.link { background: none; border: none; color: var(--ink); padding: 0; tex
 @media (prefers-reduced-motion: reduce) {
   .card, button { transition: none; }
 }
+
+.price .was {
+  color: var(--muted);
+  font-weight: 400;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.savings {
+  margin: 0 0 8px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: var(--ok-bg);
+  color: var(--ok);
+  font-size: 13px;
+  font-weight: 500;
+}
+.coupon-msg .link { font-size: 13px; }
