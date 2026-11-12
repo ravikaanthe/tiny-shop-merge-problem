@@ -16,15 +16,17 @@ const storage = {
 
 const state = {
   cart: storage.get('cart', []),
+  coupon: storage.get('coupon', ''),
   order: null,
 };
 
 function save() {
   storage.set('cart', state.cart);
+  storage.set('coupon', state.coupon);
 }
 
 function currentQuote() {
-  return Pricing.quote(state.cart, CATALOG);
+  return Pricing.quote(state.cart, CATALOG, state.coupon);
 }
 
 // ----- helpers -----
@@ -103,13 +105,46 @@ function renderCart() {
         <button type="button" class="link" data-remove="${l.id}">Remove</button>
       </div>`).join('')}
 
+    <div class="coupon">
+      <label class="sr-only" for="coupon-code">Coupon code</label>
+      <input id="coupon-code" data-testid="coupon-code" type="text" placeholder="Coupon code" value="${q.couponCode}" autocomplete="off">
+      <button type="button" class="secondary" id="apply-coupon" data-testid="apply-coupon">Apply</button>
+    </div>
+    <p class="coupon-msg ${q.couponCode ? 'ok' : ''}" id="coupon-msg" data-testid="coupon-message">${q.couponCode ? `${q.couponCode} applied. <button type="button" class="link" id="remove-coupon" data-testid="remove-coupon">Remove</button>` : ''}</p>
+
     <table class="totals">
       <tr><td>Subtotal</td><td data-testid="subtotal">${money(q.subtotal)}</td></tr>
+      ${q.couponCode ? `<tr><td>Coupon (${q.couponCode})</td><td data-testid="coupon-discount">-${money(q.couponDiscount)}</td></tr>` : ''}
       <tr><td>Shipping</td><td data-testid="shipping">${q.shipping === 0 ? 'Free' : money(q.shipping)}</td></tr>
       <tr class="total"><td>Total</td><td data-testid="total">${money(q.total)}</td></tr>
     </table>
 
     <button type="button" class="checkout" id="checkout">Checkout</button>`;
+}
+
+function applyCoupon() {
+  const input = $('coupon-code');
+  if (!input) return;
+  const code = input.value.trim().toUpperCase();
+
+  if (!Pricing.isValidCoupon(code)) {
+    const message = $('coupon-msg');
+    if (message) {
+      message.textContent = 'Invalid code';
+      message.className = 'coupon-msg error';
+    }
+    return;
+  }
+
+  state.coupon = code;
+  save();
+  render();
+}
+
+function removeCoupon() {
+  state.coupon = '';
+  save();
+  render();
 }
 
 function checkout() {
@@ -119,6 +154,7 @@ function checkout() {
   storage.set('orderCount', n);
   state.order = { id: `TS-${1000 + n}`, total: q.total };
   state.cart = [];
+  state.coupon = '';
   save();
   render();
 }
@@ -131,9 +167,18 @@ document.addEventListener('click', (e) => {
     const line = state.cart.find((l) => l.id === t.dataset.qty);
     setQty(t.dataset.qty, (line ? line.qty : 0) + Number(t.dataset.delta));
   } else if (t.dataset.remove) setQty(t.dataset.remove, 0);
+  else if (t.id === 'apply-coupon') applyCoupon();
+  else if (t.id === 'remove-coupon') removeCoupon();
   else if (t.id === 'checkout') checkout();
   else if (t.id === 'continue-shopping') { state.order = null; render(); }
 });
 
 renderProducts();
 render();
+
+document.addEventListener('keydown', (e) => {
+  if (e.target && e.target.id === 'coupon-code' && e.key === 'Enter') {
+    e.preventDefault();
+    applyCoupon();
+  }
+});
