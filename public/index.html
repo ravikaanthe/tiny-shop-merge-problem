@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tiny Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <span class="brand-name">tiny shop</span>
+      <span class="brand-note">goods for a small desk</span>
+    </div>
+    <span class="cart-count" id="cart-count" aria-live="polite">Cart (0)</span>
+  </header>
+
+  <main class="layout">
+    <section aria-labelledby="products-heading">
+      <p class="eyebrow">products / 06</p>
+      <h1 id="products-heading">Six small things, made well.</h1>
+      <div class="grid" id="products"></div>
+    </section>
+
+    <aside class="cart" aria-labelledby="cart-heading">
+      <h2 id="cart-heading">Your cart</h2>
+      <div id="cart-body"></div>
+    </aside>
+  </main>
+
+  <footer class="foot">Free shipping on orders of $50.00 or more.</footer>
+
+  <script src="products.js"></script>
+  <script src="art.js"></script>
+  <script src="pricing.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
