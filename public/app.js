@@ -100,6 +100,7 @@ function renderCart() {
   }, 0);
 
   $('cart-body').innerHTML = `
+    <button type="button" class="checkout" id="complete-purchase">Complete Purchase</button>
     ${saleSavings > 0 ? `<p class="savings" data-testid="savings-banner">● You're saving ${money(saleSavings)} with sale prices</p>` : ''}
     ${q.lines.map((l) => `
       <div class="line" data-testid="line-${l.id}">
@@ -127,7 +128,7 @@ function renderCart() {
       <tr class="total"><td>Total</td><td data-testid="total">${money(q.total)}</td></tr>
     </table>
 
-    <button type="button" class="checkout" id="checkout">Checkout</button>`;
+    `;
 }
 
 function applyCoupon() {
@@ -177,7 +178,7 @@ document.addEventListener('click', (e) => {
   } else if (t.dataset.remove) setQty(t.dataset.remove, 0);
   else if (t.id === 'apply-coupon') applyCoupon();
   else if (t.id === 'remove-coupon') removeCoupon();
-  else if (t.id === 'checkout') checkout();
+  else if (t.id === 'complete-purchase') checkout();
   else if (t.id === 'continue-shopping') { state.order = null; render(); }
 });
 
